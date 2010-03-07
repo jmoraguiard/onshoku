@@ -1,51 +1,51 @@
 #include "testApp.h"
 
-int camWidth = 640; 
-int camHeight = 320; 
+int camWidth = 640;
+int camHeight = 320;
 
 int imgWidth = 320;
-int imgHeight = 240; 
+int imgHeight = 240;
 
 
-/* 
- * TODO: sequenciador, audio, video  
- * TOFIX: colores 
+/*
+ * TODO: sequenciador, audio, video
+ * TOFIX: colores
  *
  *
  */
- 
+
 
 //--------------------------------------------------------------
 void testApp::setup() {
 
-	
-	ofSetLogLevel(OF_LOG_VERBOSE); 
-	//vidGrabber.listDevices(); 
-	//vidGrabber.videoSettings(); 
-	ofSetLogLevel(OF_LOG_WARNING); 
+
+	ofSetLogLevel(OF_LOG_VERBOSE);
+	//vidGrabber.listDevices();
+	//vidGrabber.videoSettings();
+	ofSetLogLevel(OF_LOG_WARNING);
 	//vidGrabber.setDeviceID(4);
-	
 
-	info.loadFont("./fonts/verdana.ttf", 20); 
-	
-		
+
+	info.loadFont("./fonts/verdana.ttf", 20);
+
+
 	#ifdef _USE_LIVE_VIDEO
-		vidGrabber.setVerbose(true); 
-		vidGrabber.initGrabber(camWidth, camHeight); 
+		vidGrabber.setVerbose(true);
+		vidGrabber.initGrabber(camWidth, camHeight);
 	#else
-		vidPlayer.loadMovie("colores2.mov"); 
+		vidPlayer.loadMovie("colores2.mov");
 		vidPlayer.play();
-	#endif 
-		
+	#endif
 
-	//box para el warping 
-	boxInputMatrix.setup( 15, 50, imgWidth, imgHeight); 
-	boxInputReference.setup( 400, 50, 50, 100); 
+
+	//box para el warping
+	boxInputMatrix.setup( 15, 50, imgWidth, imgHeight);
+	boxInputReference.setup( 400, 50, 50, 100);
 	boxOutput.setup( 675, 50, imgWidth, imgHeight);
 
-	//imagenes 
+	//imagenes
     inputImage.allocate(imgWidth, imgHeight);
-	analyzedImageMatrix.allocate(imgWidth, imgHeight); 
+	analyzedImageMatrix.allocate(imgWidth, imgHeight);
 	analyzedImageReference.allocate(imgWidth, imgHeight);
 
 	digitalImage.allocate(imgWidth, imgHeight);
@@ -66,23 +66,23 @@ void testApp::update(){
 	ofBackground(100,100,100);
 
     bool bNewFrame = false;
-		
+
 	#ifdef _USE_LIVE_VIDEO
 		vidGrabber.grabFrame();
 		bNewFrame = vidGrabber.isFrameNew();
 	#else
 		vidPlayer.idleMovie();
 		bNewFrame = vidPlayer.isFrameNew();
-	#endif 
-		
-	if (bNewFrame) {		
-			
+	#endif
+
+	if (bNewFrame) {
+
 		#ifdef _USE_LIVE_VIDEO
-				inputImage.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight); 
-		#else 
-				inputImage.setFromPixels(vidPlayer.getPixels(), camWidth, camHe); 
-		#endif 
-		
+				inputImage.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
+		#else
+				inputImage.setFromPixels(vidPlayer.getPixels(), camWidth, camHe);
+		#endif
+
 
         ofPoint dstPts[4] = {
             ofPoint(0, imgHeight, 0),
@@ -91,8 +91,8 @@ void testApp::update(){
             ofPoint(0, 0, 0)
         };
 
-        analyzedImageMatrix.warpIntoMe(inputImage, boxInputMatrix.fHandles, dstPts ); 
-		analyzedImageReference.warpIntoMe(inputImage, boxInputMatrix.fHandles, dstPts ); 
+        analyzedImageMatrix.warpIntoMe(inputImage, boxInputMatrix.fHandles, dstPts );
+		analyzedImageReference.warpIntoMe(inputImage, boxInputMatrix.fHandles, dstPts );
 		outputImage.warpIntoMe(digitalImage, boxOutput.fHandles, dstPts );
 
 		pixels = analyzedImageMatrix.getPixels();
@@ -106,18 +106,18 @@ void testApp::draw(){
 
 	ofSetColor(0xffffff);
 
-	//video input 
+	//video input
 	sprintf(reportStr, "Input Image");
 	ofDrawBitmapString(reportStr, 15, 305);
-	
-	#ifdef _USE_LIVE_VIDEO
-		vidGrabber.draw(15, 50, imgWidth, imgHeight); 
-	#else
-		vidPlayer.draw(15, 50, imgWidth, imgHeight); 
-	#endif 
-		
 
-	//analyzed image 
+	#ifdef _USE_LIVE_VIDEO
+		vidGrabber.draw(15, 50, imgWidth, imgHeight);
+	#else
+		vidPlayer.draw(15, 50, imgWidth, imgHeight);
+	#endif
+
+
+	//analyzed image
 	sprintf(reportStr, "Analyzed Image");
 	ofDrawBitmapString(reportStr, 345, 305);
 	ofPushMatrix();
@@ -128,36 +128,36 @@ void testApp::draw(){
 
     ofSetColor(0xffffff);
 
-	
-    //DIGITAL IMAGE 
+
+    //DIGITAL IMAGE
 	sprintf(reportStr, "Digital Image");
 	ofDrawBitmapString(reportStr, 675, 305);
-    tileMatrixImage.draw(675, 50, imgWidth, imgHeight));
+    tileMatrixImage.draw(675, 50, imgWidth, imgHeight);
 
-	
-    //OUTPUT IMAGE 
+
+    //OUTPUT IMAGE
 	sprintf(reportStr, "Output Image");
-	ofDrawBitmapString(reportStr, 675, 575); 
-    outputImage.draw(675, 320, imgWidth, imgHeight));  //preview 
-    outputImage.draw(1024, 0); //output 
+	ofDrawBitmapString(reportStr, 675, 575);
+    outputImage.draw(675, 320, imgWidth, imgHeight);  //preview
+    outputImage.draw(1024, 0); //output
 
-	
-	//recuadritos para diferenciar zonas 
+
+	//recuadritos para diferenciar zonas
     ofSetColor(0x000000);
 	ofNoFill();
-    ofRect(15, 50, imgWidth, imgHeight));
-	ofRect(345, 50, imgWidth, imgHeight));
-	ofRect(675, 50, imgWidth, imgHeight));
-	ofRect(675, 320, imgWidth, imgHeight));
+    ofRect(15, 50, imgWidth, imgHeight);
+	ofRect(345, 50, imgWidth, imgHeight);
+	ofRect(675, 50, imgWidth, imgHeight);
+	ofRect(675, 320, imgWidth, imgHeight);
 
-	
+
     ofFill();
     boxInputMatrix.draw(15, 50);
     boxOutput.draw(675, 50);
 
-	
-	
-	//a arreglar 
+
+
+	//a arreglar
 	// finally, a report:
 	char currentColor[1024];
 	sprintf(currentColor, "current color: %d %d %d color detected %d", hue, sat, val, isTheColor);
@@ -176,7 +176,7 @@ void testApp::draw(){
 
 	ofSetColor(0x000000);
 
-	
+
 
 
 
@@ -189,13 +189,13 @@ void testApp::draw(){
 void testApp::keyPressed  (int key){
 
 	switch (key){
-		case ' ': 
-			
-		#ifdef _USE_LIVE_VIDEO
-			vidGrabber.videoSettings(); 
+		case ' ':
 
-		#endif 
-			
+		#ifdef _USE_LIVE_VIDEO
+			vidGrabber.videoSettings();
+
+		#endif
+
 			break;
 
 		case '0':
